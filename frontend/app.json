@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "DataFlow",
+    "slug": "dataflow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dataflow.app"
+    },
+    "android": {
+      "package": "com.dataflow.app",
+      "permissions": [
+        "android.permission.DETECT_SCREEN_CAPTURE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "dataflow",
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

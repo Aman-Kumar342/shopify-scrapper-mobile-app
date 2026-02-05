@@ -1,0 +1,151 @@
+# Shopify CSV Scraper App – Development Plan
+
+## 1. Goal
+
+Build a **fast, lightweight mobile SaaS app** that lets users paste a public Shopify store URL, scrape product data, and download it as a CSV after authentication and payment.
+
+**Non-goals:** UI redesign, heavy analytics, headless-browser-first scraping, microservices.
+
+---
+
+## 2. Fixed Tech Stack
+
+### Frontend (Mobile)
+
+* React Native
+* Expo (managed)
+* TypeScript
+* Expo Router
+* NativeWind (Tailwind)
+* Axios
+* Expo SecureStore
+
+### Backend
+
+* Node.js
+* Fastify
+* TypeScript
+* Zod (validation)
+* Supabase Auth (JWT verification)
+* Axios / Fetch (scraping)
+
+### Infra
+
+* **Supabase** (Authentication + Storage + PostgreSQL)
+* Railway / Render (hosting)
+
+---
+
+## 3. System Architecture (High Level)
+
+User (Mobile App)
+→ Backend API (Fastify)
+→ Scraper Module
+→ CSV Generator
+→ Object Storage (Signed URL)
+→ Download on Mobile
+
+---
+
+## 4. Core Features
+
+### 4.1 Authentication
+
+* Supabase Auth (Email OTP / Magic Link)
+* Supabase issues JWT
+* Backend verifies JWT using Supabase public key
+* Token stored securely via Expo SecureStore
+
+### 4.2 Shopify Validation
+
+* Validate URL format
+* Check Shopify indicators
+* Confirm `/products.json` availability
+
+### 4.3 Scraping
+
+* Use Shopify public endpoints
+* Handle pagination
+* Rate limiting + timeout
+* Public data only
+
+### 4.4 CSV Export
+
+* Convert JSON → CSV
+* Stream generation
+* Upload CSV to **Supabase Storage (private bucket)**
+* Generate **time-limited signed download URLs**
+
+### 4.5 Payments
+
+* Stripe / Razorpay
+* Server-side verification
+* Credit-based access stored in Supabase DB
+* Stripe / Razorpay
+* Server-side verification
+* Credit-based access
+
+### 4.6 History
+
+* Job status
+* Download links
+* Expiry handling
+
+---
+
+## 5. API Plan
+
+### Auth
+
+* POST `/auth/login`
+* POST `/auth/verify-otp`
+
+### Scraping
+
+* POST `/scrape/validate-store`
+* POST `/scrape/start`
+* GET `/scrape/status/:jobId`
+* GET `/scrape/download/:jobId`
+
+---
+
+## 6. Data Models (Minimal)
+
+### User (Supabase Auth)
+
+* id (uuid)
+* email
+* credits
+* created_at
+
+### ScrapeJob
+
+* id
+* user_id
+* store_url
+* status (pending | running | completed | failed)
+* csv_path (Supabase Storage)
+* created_at
+
+### ScrapeJob
+
+* id
+* user_id
+* store_url
+* status (pending | running | completed | failed)
+* csv_url
+* created_at
+
+---
+
+## 7. Frontend Screen Plan
+
+1. Onboarding (1–2 screens)
+2. Login / OTP
+3. Home (Paste Shopify URL)
+4. Validation / Preview
+5. Payment
+6. Processing Status
+7. Download Screen
+8. History
+9. Settings
